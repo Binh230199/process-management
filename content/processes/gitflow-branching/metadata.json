@@ -1,0 +1,11 @@
+{
+  "title": "GitFlow Branching Strategy",
+  "description": "Standard GitFlow workflow for managing feature development, releases, and hotfixes.",
+  "category": "Git Workflow",
+  "tags": ["git", "branching", "gitflow", "release"],
+  "participants": [
+    { "role": "Developer", "count": "1-N" },
+    { "role": "Release Manager", "count": 1 },
+    { "role": "DevOps Engineer", "count": 1 }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "nodes": [
+    {
+      "id": "step-1-start",
+      "type": "processNode",
+      "data": {
+        "label": "Step One Label",
+        "role": "developer",
+        "description": "Short description of what this step does",
+        "stepFile": "step-1-start"
+      },
+      "position": { "x": 250, "y": 0 }
+    },
+    {
+      "id": "step-2-action",
+      "type": "processNode",
+      "data": {
+        "label": "Step Two Label",
+        "role": "system",
+        "description": "Short description of what this step does",
+        "stepFile": "step-2-action"
+      },
+      "position": { "x": 250, "y": 120 }
+    },
+    {
+      "id": "step-3-review",
+      "type": "processNode",
+      "data": {
+        "label": "Step Three Label",
+        "role": "reviewer",
+        "description": "Short description of what this step does",
+        "stepFile": "step-3-review"
+      },
+      "position": { "x": 250, "y": 240 }
+    },
+    {
+      "id": "step-4-branch-success",
+      "type": "processNode",
+      "data": {
+        "label": "Success Path",
+        "role": "system",
+        "description": "What happens on the happy path",
+        "stepFile": "step-4-branch-success"
+      },
+      "position": { "x": 500, "y": 360 }
+    },
+    {
+      "id": "step-4-branch-fail",
+      "type": "processNode",
+      "data": {
+        "label": "Failure Path",
+        "role": "developer",
+        "description": "What happens when something goes wrong",
+        "stepFile": "step-4-branch-fail"
+      },
+      "position": { "x": 0, "y": 360 }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1-2",
+      "source": "step-1-start",
+      "target": "step-2-action",
+      "animated": true
+    },
+    {
+      "id": "e2-3",
+      "source": "step-2-action",
+      "target": "step-3-review"
+    },
+    {
+      "id": "e3-success",
+      "source": "step-3-review",
+      "target": "step-4-branch-success",
+      "label": "Approved"
+    },
+    {
+      "id": "e3-fail",
+      "source": "step-3-review",
+      "target": "step-4-branch-fail",
+      "label": "Rejected"
+    },
+    {
+      "id": "e-loop",
+      "source": "step-4-branch-fail",
+      "target": "step-1-start",
+      "type": "smoothstep"
+    }
+  ]
+}

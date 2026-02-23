@@ -1,0 +1,11 @@
+{
+  "title": "My Process Title",
+  "description": "One sentence describing what this process achieves.",
+  "category": "DevOps",
+  "tags": ["tag1", "tag2", "tag3"],
+  "participants": [
+    { "role": "Developer", "count": 1 },
+    { "role": "Reviewer", "count": "1-2" },
+    { "role": "CI System", "count": 1 }
+  ]
+}

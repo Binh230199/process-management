@@ -1,0 +1,78 @@
+{
+  "nodes": [
+    {
+      "id": "step-1-push",
+      "type": "processNode",
+      "data": {
+        "label": "Push Commit",
+        "role": "developer",
+        "description": "Developer pushes commit to Gerrit for review",
+        "stepFile": "step-1-push"
+      },
+      "position": { "x": 250, "y": 0 }
+    },
+    {
+      "id": "step-2-ci",
+      "type": "processNode",
+      "data": {
+        "label": "CI Verification",
+        "role": "system",
+        "description": "Jenkins runs automated tests and checks",
+        "stepFile": "step-2-ci"
+      },
+      "position": { "x": 250, "y": 120 }
+    },
+    {
+      "id": "step-3-review",
+      "type": "processNode",
+      "data": {
+        "label": "Code Review",
+        "role": "reviewer",
+        "description": "Reviewer inspects the change and provides feedback",
+        "stepFile": "step-3-review"
+      },
+      "position": { "x": 250, "y": 240 }
+    },
+    {
+      "id": "step-4-revise",
+      "type": "processNode",
+      "data": {
+        "label": "Address Comments",
+        "role": "developer",
+        "description": "Developer addresses review comments and pushes a new patch set",
+        "stepFile": "step-4-revise"
+      },
+      "position": { "x": 0, "y": 360 }
+    },
+    {
+      "id": "step-5-approve",
+      "type": "processNode",
+      "data": {
+        "label": "Approve (+2)",
+        "role": "reviewer",
+        "description": "Reviewer gives Code-Review +2 to approve the change",
+        "stepFile": "step-5-approve"
+      },
+      "position": { "x": 500, "y": 360 }
+    },
+    {
+      "id": "step-6-merge",
+      "type": "processNode",
+      "data": {
+        "label": "Merge to Main",
+        "role": "system",
+        "description": "Change is submitted and merged into the main branch",
+        "stepFile": "step-6-merge"
+      },
+      "position": { "x": 250, "y": 480 }
+    }
+  ],
+  "edges": [
+    { "id": "e1-2", "source": "step-1-push", "target": "step-2-ci", "animated": true },
+    { "id": "e2-3", "source": "step-2-ci", "target": "step-3-review" },
+    { "id": "e3-4", "source": "step-3-review", "target": "step-4-revise", "label": "Changes Requested" },
+    { "id": "e4-1", "source": "step-4-revise", "target": "step-1-push", "type": "smoothstep" },
+    { "id": "e3-5", "source": "step-3-review", "target": "step-5-approve", "label": "Looks Good" },
+    { "id": "e5-6", "source": "step-5-approve", "target": "step-6-merge", "animated": true }
+  ]
+}

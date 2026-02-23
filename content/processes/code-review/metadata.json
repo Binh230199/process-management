@@ -1,0 +1,11 @@
+{
+  "title": "Gerrit Code Review Process",
+  "description": "End-to-end workflow for submitting and reviewing code changes via Gerrit.",
+  "category": "Code Quality",
+  "tags": ["git", "gerrit", "review", "ci"],
+  "participants": [
+    { "role": "Developer", "count": 1 },
+    { "role": "Reviewer", "count": "1-2" },
+    { "role": "CI System", "count": 1 }
+  ]
+}

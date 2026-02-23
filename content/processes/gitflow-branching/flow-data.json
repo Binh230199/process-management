@@ -1,0 +1,89 @@
+{
+  "nodes": [
+    {
+      "id": "step-1-feature-branch",
+      "type": "processNode",
+      "data": {
+        "label": "Create Feature Branch",
+        "role": "developer",
+        "description": "Branch off from develop for new feature work",
+        "stepFile": "step-1-feature-branch"
+      },
+      "position": { "x": 250, "y": 0 }
+    },
+    {
+      "id": "step-2-develop",
+      "type": "processNode",
+      "data": {
+        "label": "Develop Feature",
+        "role": "developer",
+        "description": "Implement the feature with tests",
+        "stepFile": "step-2-develop"
+      },
+      "position": { "x": 250, "y": 120 }
+    },
+    {
+      "id": "step-3-merge-develop",
+      "type": "processNode",
+      "data": {
+        "label": "Merge to Develop",
+        "role": "developer",
+        "description": "Merge feature branch back into develop",
+        "stepFile": "step-3-merge-develop"
+      },
+      "position": { "x": 250, "y": 240 }
+    },
+    {
+      "id": "step-4-release-branch",
+      "type": "processNode",
+      "data": {
+        "label": "Create Release Branch",
+        "role": "reviewer",
+        "description": "Release Manager creates release/x.y.z branch",
+        "stepFile": "step-4-release-branch"
+      },
+      "position": { "x": 250, "y": 360 }
+    },
+    {
+      "id": "step-5-qa",
+      "type": "processNode",
+      "data": {
+        "label": "QA & Stabilization",
+        "role": "system",
+        "description": "Run full QA test suite and apply bug fixes",
+        "stepFile": "step-5-qa"
+      },
+      "position": { "x": 250, "y": 480 }
+    },
+    {
+      "id": "step-6-tag-main",
+      "type": "processNode",
+      "data": {
+        "label": "Tag & Merge to Main",
+        "role": "reviewer",
+        "description": "Merge release branch to main and tag the version",
+        "stepFile": "step-6-tag-main"
+      },
+      "position": { "x": 500, "y": 600 }
+    },
+    {
+      "id": "step-7-hotfix",
+      "type": "processNode",
+      "data": {
+        "label": "Hotfix (if needed)",
+        "role": "developer",
+        "description": "Branch from main, fix critical issue, merge back to main+develop",
+        "stepFile": "step-7-hotfix"
+      },
+      "position": { "x": 0, "y": 600 }
+    }
+  ],
+  "edges": [
+    { "id": "e1-2", "source": "step-1-feature-branch", "target": "step-2-develop", "animated": true },
+    { "id": "e2-3", "source": "step-2-develop", "target": "step-3-merge-develop" },
+    { "id": "e3-4", "source": "step-3-merge-develop", "target": "step-4-release-branch" },
+    { "id": "e4-5", "source": "step-4-release-branch", "target": "step-5-qa", "animated": true },
+    { "id": "e5-6", "source": "step-5-qa", "target": "step-6-tag-main", "label": "Stable" },
+    { "id": "e5-7", "source": "step-5-qa", "target": "step-7-hotfix", "label": "Critical Bug" }
+  ]
+}
