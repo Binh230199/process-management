@@ -33,9 +33,14 @@ export interface FlowEdge {
   id: string;
   source: string;
   target: string;
+  sourceHandle?: string;
+  targetHandle?: string;
   animated?: boolean;
   label?: string;
   type?: string;
+  style?: Record<string, unknown>;
+  labelStyle?: Record<string, unknown>;
+  labelBgStyle?: Record<string, unknown>;
 }
 
 export interface ProcessDetail extends ProcessMetadata {

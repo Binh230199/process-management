@@ -1,33 +1,120 @@
 "use client";
 
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   ReactFlow,
   Background,
   Controls,
   MiniMap,
+  Panel,
   BackgroundVariant,
   addEdge,
   useNodesState,
   useEdgesState,
+  useReactFlow,
   type NodeMouseHandler,
   type Connection,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useRouter, useSearchParams } from "next/navigation";
-import { RotateCcw, Map } from "lucide-react";
-import { useState } from "react";
+import { RotateCcw, Map, ImageDown, Check, Loader2 } from "lucide-react";
 import ProcessNode from "./ProcessNode";
 import LoopEdge from "./LoopEdge";
 import type { FlowData } from "@/lib/data-loader";
 
-const nodeTypes = {
-  processNode: ProcessNode,
-};
+const nodeTypes = { processNode: ProcessNode };
+const edgeTypes = { loopEdge: LoopEdge };
 
-const edgeTypes = {
-  loopEdge: LoopEdge,
-};
+// ─── Inner toolbar (must live inside ReactFlow to use useReactFlow) ──────────
+type CopyState = "idle" | "loading" | "copied" | "error";
+
+function FlowToolbar({
+  showMiniMap,
+  onToggleMiniMap,
+}: {
+  showMiniMap: boolean;
+  onToggleMiniMap: () => void;
+}) {
+  const [copyState, setCopyState] = useState<CopyState>("idle");
+
+  const copyAsPng = useCallback(async () => {
+    setCopyState("loading");
+    try {
+      // Chụp đúng những gì đang thấy trên màn hình — không đổi zoom, không tính toán
+      const rendererEl = document.querySelector(".react-flow__renderer") as HTMLElement | null;
+      if (!rendererEl) throw new Error("React Flow renderer not found");
+
+      const { toPng } = await import("html-to-image");
+      const dataUrl = await toPng(rendererEl, {
+        pixelRatio: 2,
+        backgroundColor: "#020817",
+        filter: (el) => {
+          if (el instanceof HTMLElement) {
+            if (el.classList.contains("react-flow__controls")) return false;
+            if (el.classList.contains("react-flow__minimap"))  return false;
+            if (el.classList.contains("react-flow__panel"))    return false;
+          }
+          return true;
+        },
+      });
+
+      const blob = await (await fetch(dataUrl)).blob();
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+      setCopyState("copied");
+    } catch (e) {
+      console.error("Copy PNG failed:", e);
+      setCopyState("error");
+    } finally {
+      setTimeout(() => setCopyState("idle"), 2200);
+    }
+  }, []);
+
+  const btnBase =
+    "nodrag nopan cursor-pointer flex items-center justify-center w-9 h-9 rounded-lg border transition-all duration-200";
+  const btnIdle =
+    "bg-slate-900/80 border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-600";
+
+  return (
+    <Panel position="top-right" className="flex flex-col gap-2 !m-3">
+      {/* MiniMap toggle */}
+      <button
+        onClick={onToggleMiniMap}
+        title="Toggle MiniMap"
+        className={[
+          btnBase,
+          showMiniMap
+            ? "bg-indigo-600/30 border-indigo-500/50 text-indigo-300"
+            : btnIdle,
+        ].join(" ")}
+      >
+        <Map size={16} />
+      </button>
+
+      {/* Copy diagram to clipboard as PNG */}
+      <button
+        onClick={copyAsPng}
+        disabled={copyState === "loading"}
+        title="Copy diagram as PNG to clipboard"
+        className={[
+          btnBase,
+          copyState === "copied"
+            ? "bg-emerald-600/30 border-emerald-500/50 text-emerald-300"
+            : copyState === "error"
+            ? "bg-red-600/30 border-red-500/50 text-red-300"
+            : btnIdle,
+        ].join(" ")}
+      >
+        {copyState === "loading" ? (
+          <Loader2 size={16} className="animate-spin" />
+        ) : copyState === "copied" ? (
+          <Check size={16} />
+        ) : (
+          <ImageDown size={16} />
+        )}
+      </button>
+    </Panel>
+  );
+}
 
 interface FlowCanvasProps {
   flowData: FlowData;
@@ -39,7 +126,6 @@ export default function FlowCanvas({ flowData, slug }: FlowCanvasProps) {
   const searchParams = useSearchParams();
   const selectedStep = searchParams.get("step");
   const [showMiniMap, setShowMiniMap] = useState(false);
-  const reactFlowRef = useRef<{ fitView: () => void } | null>(null);
 
   const initialNodes = useMemo(
     () =>
@@ -125,25 +211,14 @@ export default function FlowCanvas({ flowData, slug }: FlowCanvasProps) {
             maskColor="rgba(2, 8, 23, 0.7)"
           />
         )}
+        {/* Toolbar lives inside ReactFlow so useReactFlow() works */}
+        <FlowToolbar
+          showMiniMap={showMiniMap}
+          onToggleMiniMap={() => setShowMiniMap((v) => !v)}
+        />
       </ReactFlow>
 
-      {/* Toolbar */}
-      <div className="absolute top-4 right-4 flex flex-col gap-2">
-        <button
-          onClick={() => setShowMiniMap((v) => !v)}
-          title="Toggle MiniMap"
-          className={[
-            "flex items-center justify-center w-9 h-9 rounded-lg border transition-all duration-200",
-            showMiniMap
-              ? "bg-indigo-600/30 border-indigo-500/50 text-indigo-300"
-              : "bg-slate-900/80 border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-600",
-          ].join(" ")}
-        >
-          <Map size={16} />
-        </button>
-      </div>
-
-      {/* Reset view button */}
+      {/* Reset view button — outside ReactFlow, uses DOM query */}
       <button
         onClick={() => {
           const resetBtn = document.querySelector(
