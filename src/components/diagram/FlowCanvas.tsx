@@ -18,10 +18,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { RotateCcw, Map } from "lucide-react";
 import { useState } from "react";
 import ProcessNode from "./ProcessNode";
+import LoopEdge from "./LoopEdge";
 import type { FlowData } from "@/lib/data-loader";
 
 const nodeTypes = {
   processNode: ProcessNode,
+};
+
+const edgeTypes = {
+  loopEdge: LoopEdge,
 };
 
 interface FlowCanvasProps {
@@ -52,9 +57,9 @@ export default function FlowCanvas({ flowData, slug }: FlowCanvasProps) {
     () =>
       flowData.edges.map((e) => ({
         ...e,
-        style: { stroke: "#475569", strokeWidth: 1.5 },
-        labelStyle: { fill: "#94a3b8", fontSize: 11 },
-        labelBgStyle: { fill: "#0f172a", fillOpacity: 0.9 },
+        style: { stroke: "#475569", strokeWidth: 1.5, ...e.style },
+        labelStyle: { fill: "#94a3b8", fontSize: 11, ...e.labelStyle },
+        labelBgStyle: { fill: "#0f172a", fillOpacity: 0.9, ...e.labelBgStyle },
       })),
     [flowData.edges]
   );
@@ -90,6 +95,7 @@ export default function FlowCanvas({ flowData, slug }: FlowCanvasProps) {
         onConnect={onConnect}
         onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         fitView
         fitViewOptions={{ padding: 0.3 }}
         minZoom={0.2}

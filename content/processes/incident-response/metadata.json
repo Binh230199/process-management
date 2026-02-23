@@ -1,0 +1,12 @@
+{
+  "title": "Production Incident Response",
+  "description": "End-to-end process for detecting, triaging, diagnosing, and resolving production incidents with severity-based branching and iterative fix loops.",
+  "category": "DevOps",
+  "tags": ["incident", "on-call", "production", "sre", "monitoring", "postmortem"],
+  "participants": [
+    { "role": "On-Call Engineer", "count": 1 },
+    { "role": "Incident Commander", "count": 1 },
+    { "role": "Monitoring System", "count": 1 },
+    { "role": "Tech Lead", "count": "0-1" }
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "nodes": [
+    {
+      "id": "step-1-alert",
+      "type": "processNode",
+      "data": {
+        "label": "Alert Triggered",
+        "role": "system",
+        "description": "Monitoring system detects anomaly and fires alert",
+        "stepFile": "step-1-alert"
+      },
+      "position": { "x": 300, "y": 0 }
+    },
+    {
+      "id": "step-2-triage",
+      "type": "processNode",
+      "data": {
+        "label": "Triage Severity",
+        "role": "reviewer",
+        "description": "Incident Commander assesses severity: P1/P2 or P3/P4",
+        "stepFile": "step-2-triage"
+      },
+      "position": { "x": 300, "y": 120 }
+    },
+    {
+      "id": "step-3a-escalate",
+      "type": "processNode",
+      "data": {
+        "label": "Escalate to On-Call",
+        "role": "reviewer",
+        "description": "P1/P2: page on-call lead, create war room, notify stakeholders",
+        "stepFile": "step-3a-escalate"
+      },
+      "position": { "x": 600, "y": 240 }
+    },
+    {
+      "id": "step-3b-log",
+      "type": "processNode",
+      "data": {
+        "label": "Log & Monitor P3/P4",
+        "role": "developer",
+        "description": "P3/P4: create ticket, schedule fix in next sprint",
+        "stepFile": "step-3b-log"
+      },
+      "position": { "x": 0, "y": 240 }
+    },
+    {
+      "id": "step-4-investigate",
+      "type": "processNode",
+      "data": {
+        "label": "Investigate & Diagnose",
+        "role": "developer",
+        "description": "On-call engineer digs into logs, traces, and metrics",
+        "stepFile": "step-4-investigate"
+      },
+      "position": { "x": 600, "y": 360 }
+    },
+    {
+      "id": "step-5-apply-fix",
+      "type": "processNode",
+      "data": {
+        "label": "Apply Fix / Rollback",
+        "role": "developer",
+        "description": "Deploy hotfix or rollback to last stable version",
+        "stepFile": "step-5-apply-fix"
+      },
+      "position": { "x": 600, "y": 480 }
+    },
+    {
+      "id": "step-6-verify",
+      "type": "processNode",
+      "data": {
+        "label": "Verify in Production",
+        "role": "system",
+        "description": "Confirm metrics, error rate, and SLOs are back to normal",
+        "stepFile": "step-6-verify"
+      },
+      "position": { "x": 600, "y": 600 }
+    },
+    {
+      "id": "step-7-close",
+      "type": "processNode",
+      "data": {
+        "label": "Close & Post-Mortem",
+        "role": "reviewer",
+        "description": "Declare incident resolved, schedule post-mortem within 48h",
+        "stepFile": "step-7-close"
+      },
+      "position": { "x": 600, "y": 720 }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1-2",
+      "source": "step-1-alert",
+      "target": "step-2-triage",
+      "animated": true
+    },
+    {
+      "id": "e2-p1",
+      "source": "step-2-triage",
+      "target": "step-3a-escalate",
+      "label": "P1 / P2"
+    },
+    {
+      "id": "e2-p3",
+      "source": "step-2-triage",
+      "target": "step-3b-log",
+      "label": "P3 / P4"
+    },
+    {
+      "id": "e3a-4",
+      "source": "step-3a-escalate",
+      "target": "step-4-investigate",
+      "animated": true
+    },
+    {
+      "id": "e4-5",
+      "source": "step-4-investigate",
+      "target": "step-5-apply-fix",
+      "animated": true,
+      "label": "Cause Found"
+    },
+    {
+      "id": "e5-6",
+      "source": "step-5-apply-fix",
+      "target": "step-6-verify",
+      "animated": true
+    },
+    {
+      "id": "e6-7",
+      "source": "step-6-verify",
+      "target": "step-7-close",
+      "label": "Resolved ✓"
+    },
+    {
+      "id": "e6-loop",
+      "source": "step-6-verify",
+      "sourceHandle": "right-source",
+      "target": "step-4-investigate",
+      "targetHandle": "right-target",
+      "type": "loopEdge",
+      "label": "Fix Failed — Re-investigate"
+    }
+  ]
+}
